@@ -1,0 +1,75 @@
+<!-- templates/products.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://unpkg.com/vue@3"></script>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd; }
+        button {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+        }
+    </style>
+    <title> 샘플 페이지 </title>
+</head>
+<body>
+<div id="app">
+    <h2>브랜드: {{brand}}</h2>
+    <table style="margin-bottom: 20px">
+        <thead>
+        <tr>
+            <th>카테고리</th>
+            <th>가격</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="item in categories">
+            <td>{{item.카테고리}}</td>
+            <td>{{item.가격.toLocaleString('ko-KR')}}</td>
+        </tr>
+        <tr>
+            <td><strong>총액</strong></td>
+            <td>{{total.toLocaleString('ko-KR')}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <button @click="home" style="padding: 8px 16px;">홈으로</button>
+</div>
+
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                categories: [],
+                brand: '',
+                total: 0
+            }
+        },
+        mounted() {
+            fetch('/v1/finder/brands/products/min-price')
+                .then(r => r.json())
+                .then(data => {
+                    this.categories = data.최저가.카테고리;
+                    this.total = data.최저가.총액;
+                    this.brand = data.최저가.브랜드;
+                });
+        },
+        methods: {
+            home() {
+                window.location.href = '/';
+            }
+        }
+    }).mount('#app')
+</script>
+</body>
+</html>

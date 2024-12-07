@@ -1,0 +1,97 @@
+<!-- templates/products.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://unpkg.com/vue@3"></script>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        button {
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+        }
+    </style>
+    <title> 샘플 페이지 </title>
+</head>
+<body>
+<div id="app">
+    <div style="margin-bottom: 20px">
+        <input v-model="categoryName" placeholder="카테고리 이름" style="padding: 8px; margin-right: 10px;">
+        <button @click="search" style="padding: 8px 16px;">검색</button>
+    </div>
+
+    <h2>카테고리: {{category}}</h2>
+    <h2>최저가</h2>
+    <table style="margin-bottom: 20px">
+        <thead>
+        <tr>
+            <th>브랜드</th>
+            <th>가격</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="item in minProducts">
+            <td>{{item.브랜드}}</td>
+            <td>{{item.가격.toLocaleString('ko-KR')}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>최고가</h2>
+    <table style="margin-bottom: 20px">
+        <thead>
+        <tr>
+            <th>브랜드</th>
+            <th>가격</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="item in maxProducts">
+            <td>{{item.브랜드}}</td>
+            <td>{{item.가격.toLocaleString('ko-KR')}}</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <button @click="home" style="padding: 8px 16px;">홈으로</button>
+</div>
+
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                category: '',
+                minProducts: [],
+                maxProducts: []
+            }
+        },
+        methods: {
+            search() {
+                const params = new URLSearchParams({
+                    categoryName: this.categoryName
+                });
+                fetch(`/v1/finder/categories/products/min-max-price?${params}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        this.category = data.카테고리;
+                        this.minProducts = data.최저가;
+                        this.maxProducts = data.최고가;
+                    });
+            },
+            home() {
+                window.location.href = '/';
+            }
+        }
+    }).mount('#app')
+</script>
+</body>
+</html>

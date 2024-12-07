@@ -1,0 +1,55 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://unpkg.com/vue@3"></script>
+  <style>
+    .menu {
+      max-width: 600px;
+      margin: 20px auto;
+    }
+    .menu-item {
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ddd;
+      display: block;
+    }
+    h1 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="menu">
+    <h1>샘플 페이지 네비게이션</h1>
+    <button v-for="(item, index) in menuItems"
+         :key="index"
+         class="menu-item"
+         @click="navigate(item.url)">
+      {{item.title}}
+    </button>
+  </div>
+</div>
+
+<script>
+  Vue.createApp({
+    data() {
+      return {
+        menuItems: [
+          {title: '- 카테고리 별 최저 가격 브랜드/상품', url: '/finder/w/categories/products/min-price'},
+          {title: '- 단일 브랜드 단위의 최저가격 상품', url: '/finder/w/brands/products/min-price'},
+          {title: '- 카테고리 별 최고/최저 가격 브랜드/상품', url: '/finder/w/categories/products/min-max-price'}
+        ]
+      }
+    },
+    methods: {
+      navigate(url) {
+        window.location.href = url;
+      }
+    }
+  }).mount('#app')
+</script>
+</body>
+</html>
