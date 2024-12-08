@@ -46,66 +46,66 @@
     - Http Method: `GET`
     - 엔드포인트: `/v1/finder/categories/products/min-price`
     -  ### Request Param
-      - **없음**
+       - **없음**
     - ### Response body(예제)
-    - <details>
-      <summary>접기/펼치기</summary>
-      
-      ```json
-      {
-      "상품": [
+      - <details>
+        <summary>접기/펼치기</summary>
+        
+        ```json
         {
-            "카테고리": "상의",
-            "브랜드": "C",
-            "가격": 10000
-        },
-        {
-            "카테고리": "아우터",
-            "브랜드": "E",
-            "가격": 5000
-        },
-        {
-            "카테고리": "바지",
-            "브랜드": "D",
-            "가격": 3000
-        },
-        {
-            "카테고리": "스니커즈",
-            "브랜드": "G",
-            "가격": 9000
-        },
-        {
-            "카테고리": "가방",
-            "브랜드": "A",
-            "가격": 2000
-        },
-        {
-            "카테고리": "모자",
-            "브랜드": "D",
-            "가격": 1500
-        },
-        {
-            "카테고리": "양말",
-            "브랜드": "I",
-            "가격": 1700
-        },
-        {
-            "카테고리": "액세서리",
-            "브랜드": "F",
-            "가격": 1900
+        "상품": [
+          {
+              "카테고리": "상의",
+              "브랜드": "C",
+              "가격": 10000
+          },
+          {
+              "카테고리": "아우터",
+              "브랜드": "E",
+              "가격": 5000
+          },
+          {
+              "카테고리": "바지",
+              "브랜드": "D",
+              "가격": 3000
+          },
+          {
+              "카테고리": "스니커즈",
+              "브랜드": "G",
+              "가격": 9000
+          },
+          {
+              "카테고리": "가방",
+              "브랜드": "A",
+              "가격": 2000
+          },
+          {
+              "카테고리": "모자",
+              "브랜드": "D",
+              "가격": 1500
+          },
+          {
+              "카테고리": "양말",
+              "브랜드": "I",
+              "가격": 1700
+          },
+          {
+              "카테고리": "액세서리",
+              "브랜드": "F",
+              "가격": 1900
+          }
+        ],
+        "총액": 34100
         }
-      ],
-      "총액": 34100
-      }
-      ```
-     </details>
+        ```
+       </details>
 
 2. 단일 브랜드로 전체 카테고리 상품을 구매할 경우 최저 가격인 브랜드를 조회하는 API
-   - 구현 아이디어
+  - 구현 아이디어
        - 브랜드의 카테고리 별로 최소 가격을 어그리게이션한 총 금액을 기준으로 정렬한 브랜드를 우선 쿼리 
        - 가장 최소 총액을 가지는 브랜드를 픽하여 셀프 조인 아이디어를 활용하여 카테고리별 최소 금액 상품 쿼리
        - 복잡한 서브쿼리를 분리
-   - API 명세
+  - API 명세
        - Http Method: `GET`
        - 엔드포인트: `/v1/finder/brands/products/min-price`
        -  ### Request Param
@@ -159,49 +159,48 @@
             </details>
 
 3. 특정 카테고리에서 최저가격, 최고가격 브랜드를 조회하는 API
-    - 구현 아이디어
-        - 특정 카테고리를 기준으로 최소금액을 우선 조회
-        - 최소 금액과 일치하는 상품 리스트를 조회
-        - 최대 금액도 동일한 아이디어로 상품 리스트를 조회
-    - API 명세
-        - Http Method: `GET`
-        - 엔드포인트: `/v1/finder/categories/products/min-max-price`
-        - ### Request Param (query string)
-        - | 필드명                 | 데이터 타입 | 옵셔널 여부 |
-          |---------------------|--------|--------|
-          | **categoryName**    | String | **필수** |
-
-        - ### Response body(예제)
-        - <details>
-          <summary>접기/펼치기</summary>
-  
-          ```json
-          {
-           "카테고리": "바지",
-           "최저가": [
-              {
-                  "브랜드": "D",
-                  "가격": 3000
-              } 
-              ],
-           "최고가": [
-              {
-                  "브랜드": "A",
-                  "가격": 4200
-              }
-              ]
-              }
-          ```
-          </details>
+  - 구현 아이디어
+     - 특정 카테고리를 기준으로 최소금액을 우선 조회
+     - 최소 금액과 일치하는 상품 리스트를 조회
+     - 최대 금액도 동일한 아이디어로 상품 리스트를 조회
+  - API 명세
+     - Http Method: `GET`
+     - 엔드포인트: `/v1/finder/categories/products/min-max-price`
+     - ### Request Param (query string)
+       - | 필드명                 | 데이터 타입 | 옵셔널 여부 |
+         |---------------------|--------|--------|
+         | **categoryName**    | String | **필수** |
+     - ### Response body(예제)
+       - <details>
+         <summary>접기/펼치기</summary>
+         
+         ```json
+         {
+          "카테고리": "바지",
+          "최저가": [
+             {
+                 "브랜드": "D",
+                 "가격": 3000
+             } 
+             ],
+          "최고가": [
+             {
+                 "브랜드": "A",
+                 "가격": 4200
+             }
+             ]
+             }
+         ```
+       </details>
 4. 브랜드, 상품 추가/수정/삭제 API
     - 브랜드 추가
       - API 명세
           - Http Method: `POST`
           - 엔드포인트: `/v1/brands`
           - ### Request body
-          - | 필드명              | 데이터 타입 | 옵셔널 여부 | 타입   |
-            |------------------|--------|--------|------|
-            | **brandName**    | String | **필수** | Body |
+            - | 필드명              | 데이터 타입 | 옵셔널 여부 | 타입   |
+              |------------------|--------|--------|------|
+              | **brandName**    | String | **필수** | Body |
         
           - ### Response body(예제)
             - ```json
@@ -217,11 +216,11 @@
            - Http Method: `PUT`
            - 엔드포인트: `/v1/brands/{brandId}`
            - ### Request body & Path variable
-           - | 필드명           | 데이터 타입 | 옵셔널 여부  | 타입    |
-             |---------------|--------|---------|-------|
-             | **brandId**   | Long   | **필수**  | Path  |
-             | **brandName** | String | **필수**  | Body  |
-
+             - | 필드명           | 데이터 타입 | 옵셔널 여부  | 타입    |
+               |---------------|--------|---------|-------|
+               | **brandId**   | Long   | **필수**  | Path  |
+               | **brandName** | String | **필수**  | Body  |
+  
            - ### Response body(예제)
                - ```json
                  {
@@ -236,9 +235,9 @@
            - Http Method: `DELETE`
            - 엔드포인트: `/v1/brands/{brandId}`
            - ### Request body & Path variable
-           - | 필드명           | 데이터 타입 | 옵셔널 여부  | 타입    |
-             |---------------|--------|---------|-------|
-             | **brandId**   | Long   | **필수**  | Path  |
+             - | 필드명           | 데이터 타입 | 옵셔널 여부  | 타입    |
+               |---------------|--------|---------|-------|
+               | **brandId**   | Long   | **필수**  | Path  |
          
            - ### Response body(예제)
              - 없음 ( 204 No content)
@@ -247,11 +246,11 @@
            - Http Method: `POST`
            - 엔드포인트: `/v1/products`
            - ### Request body & Path variable
-           - | 필드명            | 데이터 타입     | 옵셔널 여부 | 타입   |
-             |----------------|------------|--------|------|
-             | **brandId**    | Long       | **필수** | Body |
-             | **categoryId** | Long       | **필수** | Body |
-             | **price**      | BigDecimal | **필수** | Body |
+             - | 필드명            | 데이터 타입     | 옵셔널 여부 | 타입   |
+               |----------------|------------|--------|------|
+               | **brandId**    | Long       | **필수** | Body |
+               | **categoryId** | Long       | **필수** | Body |
+               | **price**      | BigDecimal | **필수** | Body |
 
          - ### Response body(예제)
              - ```json
@@ -269,32 +268,32 @@
            - Http Method: `PUT`
            - 엔드포인트: `/v1/products/{productId}`
            - ### Request body & Path variable
-           - | 필드명            | 데이터 타입     | 옵셔널 여부 | 타입   |
-             |----------------|------------|--------|------|
-             | **productId**  | Long       | **필수** | Path |
-             | **brandId**    | Long       | 선택     | Body |
-             | **categoryId** | Long       | 선택     | Body |
-             | **price**      | BigDecimal | 선택     | Body |
+             - | 필드명            | 데이터 타입     | 옵셔널 여부 | 타입   |
+               |----------------|------------|--------|------|
+               | **productId**  | Long       | **필수** | Path |
+               | **brandId**    | Long       | 선택     | Body |
+               | **categoryId** | Long       | 선택     | Body |
+               | **price**      | BigDecimal | 선택     | Body |
          
            - ### Response body(예제)
-           - ```json
-                 {
-                    "value": {
-                    "productId": 74,
-                    "categoryName": "가방",
-                    "brandName": "G",
-                    "price": 2000
-                    }
-                 }
-             ```
+             - ```json
+                   {
+                      "value": {
+                      "productId": 74,
+                      "categoryName": "가방",
+                      "brandName": "G",
+                      "price": 2000
+                      }
+                   }
+               ```
    - 상품 삭제
        - API 명세
            - Http Method: `DELETE`
            - 엔드포인트: `/v1/products/{productId}`
            - ### Request body & Path variable
-           - | 필드명           | 데이터 타입 | 옵셔널 여부  | 타입    |
-             |---------------|--------|---------|-------|
-             | **productId** | Long   | **필수**  | Path  |
-
+             - | 필드명           | 데이터 타입 | 옵셔널 여부  | 타입    |
+               |---------------|--------|---------|-------|
+               | **productId** | Long   | **필수**  | Path  |
+  
            - ### Response body(예제)
              - 없음 ( 204 No content)
