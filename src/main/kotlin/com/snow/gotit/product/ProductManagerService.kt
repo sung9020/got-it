@@ -5,11 +5,14 @@ import com.snow.gotit.base.response.ResultResponse
 import com.snow.gotit.brand.repository.BrandRepository
 import com.snow.gotit.category.repository.CategoryRepository
 import com.snow.gotit.product.dto.ProductDto
+import com.snow.gotit.product.dto.ProductSearchDto
 import com.snow.gotit.product.entity.Product
 import com.snow.gotit.product.param.CreateProductParam
 import com.snow.gotit.product.param.ModifyProductParam
+import com.snow.gotit.product.param.SearchProductParam
 import com.snow.gotit.product.repository.ProductRepository
 import lombok.RequiredArgsConstructor
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -23,9 +26,29 @@ class ProductManagerService(
     val categoryRepository: CategoryRepository,
     val brandRepository: BrandRepository,
 ) {
+    @Transactional(readOnly = true)
+    fun searchProduct(brandName: String?, categoryName: String?):ResultResponse<List<ProductSearchDto>> {
+        val productSearchDtoList = when {
+            !brandName.isNullOrEmpty() && !categoryName.isNullOrEmpty() -> productRepository.findByBrand_NameAndCategory_Name(brandName, categoryName )
+            !brandName.isNullOrEmpty() -> productRepository.findByBrand_Name(brandName)
+            !categoryName.isNullOrEmpty() -> productRepository.findByCategory_Name(categoryName)
+            else -> emptyList()
+        }.map { product ->
+            ProductSearchDto(
+                productId = product.id,
+                _price = product.price,
+                categoryName = product.category?.name.orEmpty(),
+                brandName = product.brand?.name.orEmpty(),
+                categoryId = product.category?.id,
+                brandId = product.brand?.id,
+            )
+        }
+
+        return ResultResponse.Success(productSearchDtoList)
+    }
 
    @Transactional
-   fun createProduct(param: CreateProductParam): ResultResponse<ProductDto>{
+   fun createProduct(param: CreateProductParam.ValidCreateProductParam): ResultResponse<ProductDto>{
        val category = categoryRepository.findById(param.categoryId).getOrNull()
            ?: throw GotItException(
                status = HttpStatus.NOT_FOUND,
@@ -72,7 +95,6 @@ class ProductManagerService(
                message = "브랜드 정보가 없습니다.",
                data = hashMapOf("brandId" to param.brandId)
            )
-
            product.updateBrand(brand)
        }
 
@@ -89,8 +111,6 @@ class ProductManagerService(
           product.updatePrice(param.price)
       }
 
-      productRepository.save(product)
-
        return ResultResponse.Success(
            ProductDto(
                productId = product.id,
@@ -101,6 +121,7 @@ class ProductManagerService(
        )
    }
 
+   @Transactional
    fun deleteProduct(productId: Long) =
        try {
            productRepository.deleteById(productId)

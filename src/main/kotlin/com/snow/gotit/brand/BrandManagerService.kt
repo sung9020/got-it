@@ -10,6 +10,7 @@ import com.snow.gotit.product.entity.Product
 import com.snow.gotit.product.param.CreateProductParam
 import com.snow.gotit.product.param.ModifyProductParam
 import jakarta.persistence.IdClass
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -59,7 +60,13 @@ class BrandManagerService(
         }catch (e: EmptyResultDataAccessException){
             throw GotItException(
                 status = HttpStatus.NOT_FOUND,
-                message = "삭제할 브랜드가 없습니다. e: ${e.message}",
+                message = "삭제할 브랜드가 없습니다.",
+                data = hashMapOf("brandId" to brandId)
+            )
+        }catch (ex: DataIntegrityViolationException){
+            throw GotItException(
+                status = HttpStatus.CONFLICT,
+                message = "연결된 상품이 존재하여 삭제가 불가합니다.",
                 data = hashMapOf("brandId" to brandId)
             )
         }

@@ -92,10 +92,10 @@ class ProductFinderService(
 
         val maxPriceProductListDeferred = CoroutineScope(Dispatchers.IO).async {
             // 최고가와 같은 브랜드가 배열로 등장
-            productRepository.findMaxProductByCategory(category.name)
+            productRepository.findMaxProductByCategory(category.id)
                 .map { product ->
                     MinMaxProductByCategoryResponse.MinMaxProductResponse(
-                        product.categoryName,
+                        product.brandName,
                         product.price
                     )
                 }
@@ -103,10 +103,10 @@ class ProductFinderService(
 
         val minPriceProductListDeferred = CoroutineScope(Dispatchers.IO).async {
             // 최저가와 같은 브랜드가 배열로 등장
-            productRepository.findMinProductByCategory(category.name)
+            productRepository.findMinProductByCategory(category.id)
                 .map { product ->
                     MinMaxProductByCategoryResponse.MinMaxProductResponse(
-                        product.categoryName,
+                        product.brandName,
                         product.price
                     )
                 }

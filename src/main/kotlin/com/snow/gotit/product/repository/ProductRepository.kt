@@ -70,7 +70,7 @@ interface ProductRepository: JpaRepository<Product, Long>{
 
     @Query("""
         SELECT new com.snow.gotit.product.dto.ProductFinderDto(
-            p.id, 
+            Max(p.id),
             p.price, 
             p.category.name, 
             p.brand.name
@@ -78,18 +78,19 @@ interface ProductRepository: JpaRepository<Product, Long>{
         FROM Product p
         JOIN p.brand b
         JOIN p.category c
-        WHERE p.category.name = :categoryName
+        WHERE p.category.id = :categoryId
         AND p.price = (
             SELECT MAX(p2.price)
             FROM Product p2
-            WHERE p2.category.name = :categoryName
+            WHERE p2.category.id = :categoryId
         )
+        GROUP BY p.price, p.category.name, p.brand.name
     """)
-    fun findMaxProductByCategory(categoryName: String): List<ProductFinderDto>
+    fun findMaxProductByCategory(@Param("categoryId") categoryId: Long?): List<ProductFinderDto>
 
     @Query("""
         SELECT new com.snow.gotit.product.dto.ProductFinderDto(
-            p.id, 
+            Max(p.id), 
             p.price, 
             p.category.name, 
             p.brand.name
@@ -97,16 +98,24 @@ interface ProductRepository: JpaRepository<Product, Long>{
         FROM Product p
         JOIN p.brand b
         JOIN p.category c
-        WHERE p.category.name = :categoryName
+        WHERE p.category.id = :categoryId
         AND p.price = (
             SELECT MIN(p2.price)
             FROM Product p2
-            WHERE p2.category.name = :categoryName
+            WHERE p2.category.id = :categoryId
         )
+        GROUP BY p.price, p.category.name, p.brand.name
     """)
-    fun findMinProductByCategory(@Param("categoryName") categoryName: String): List<ProductFinderDto>
+    fun findMinProductByCategory(@Param("categoryId") categoryId: Long?): List<ProductFinderDto>
 
     @Query("select p From Product p join fetch p.category join fetch p.brand where p.id= :id")
     fun findByIdWithCategoryAndBrand(@Param("id") id: Long): Product?
+
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.brand LEFT JOIN FETCH p.category WHERE p.brand.name = :brandName AND p.category.name = :categoryName")
+    fun findByBrand_NameAndCategory_Name(@Param("brandName") brandName: String, @Param("categoryName") categoryName: String): List<Product>
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.brand LEFT JOIN FETCH p.category WHERE p.brand.name = :brandName")
+    fun findByBrand_Name(@Param("brandName") brandName: String): List<Product>
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.brand LEFT JOIN FETCH p.category WHERE p.category.name = :categoryName")
+    fun findByCategory_Name(@Param("categoryName") categoryName: String): List<Product>
 
 }

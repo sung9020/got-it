@@ -3,25 +3,29 @@ package com.snow.gotit.product.controller
 import com.snow.gotit.base.response.ResultResponse
 import com.snow.gotit.product.ProductManagerService
 import com.snow.gotit.product.dto.ProductDto
+import com.snow.gotit.product.dto.ProductSearchDto
 import com.snow.gotit.product.param.CreateProductParam
 import com.snow.gotit.product.param.ModifyProductParam
+import com.snow.gotit.product.param.SearchProductParam
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/v1/products")
 class ProductController(
     private val productManagerService: ProductManagerService
 ) {
+    @GetMapping("search")
+    fun searchProduct(@RequestParam brandName: String?,
+                      @RequestParam categoryName: String?
+    ): ResponseEntity<ResultResponse<List<ProductSearchDto>>> {
+        return ResponseEntity.ok(productManagerService.searchProduct(brandName, categoryName))
+    }
+
     @PostMapping
-    fun createProduct(@RequestBody param: CreateProductParam): ResponseEntity<ResultResponse<ProductDto>> {
-        return ResponseEntity.ok(productManagerService.createProduct(param))
+    fun createProduct(@Valid @RequestBody param: CreateProductParam): ResponseEntity<ResultResponse<ProductDto>> {
+        return ResponseEntity.ok(productManagerService.createProduct(param.toValid()))
     }
 
     @PutMapping("/{productId}")
@@ -35,6 +39,6 @@ class ProductController(
     @DeleteMapping("/{productId}")
     fun deleteProduct(@PathVariable productId: Long): ResponseEntity<ResultResponse<String>> {
         productManagerService.deleteProduct(productId)
-        return ResponseEntity.noContent().build<ResultResponse<String>>()
+        return ResponseEntity.noContent().build()
     }
 }

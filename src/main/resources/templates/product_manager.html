@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <script src="https://unpkg.com/vue@3"></script>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .input-field {
+            padding: 8px;
+        }
+        .button {
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .guide-text {
+            background: #f5f5f5;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <h2>상품 매니저</h2>
+    <div class="guide-text">
+        브랜드 ID(Long) 안내 - <span v-html="brandGuideText"></span>
+        <br>
+        카테고리 ID(Long) 안내 - <span v-html="categoryGuideText"></span>
+    </div>
+
+    <div class="search-container">
+        <input v-model="searchBrandName" placeholder="브랜드명 검색" class="input-field">
+<!--        <input v-model="searchCategoryName" placeholder="카테고리명 검색" class="input-field">-->
+        <select v-model="searchCategoryName" style="padding: 8px; margin-right: 10px;">
+            <option value="">카테고리 선택</option>
+            <option v-for="category in categoryList"
+                    :key="category.categoryId"
+                    :value="category.categoryName">
+                {{category.categoryName}}
+            </option>
+        </select>
+        <button @click="search" class="button">검색</button>
+        <button @click="showAddModal" class="button">상품 추가</button>
+        <button @click="home" class="button">홈으로</button>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>상품 ID</th>
+            <th>브랜드 ID</th>
+            <th>브랜드명</th>
+            <th>카테고리 ID</th>
+            <th>카테고리명</th>
+            <th>가격</th>
+            <th>작업</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="product in productList" :key="product.productId">
+            <td>{{product.productId}}</td>
+            <td>{{product.brandId}}</td>
+            <td>{{product.brandName}}</td>
+            <td>{{product.categoryId}}</td>
+            <td>{{product.categoryName}}</td>
+            <td>{{product.price.toLocaleString('ko-KR')}}</td>
+            <td>
+                <button @click="showEditModal(product)" class="button">수정</button>
+                <button @click="deleteProduct(product.productId)" class="button">삭제</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- 추가/수정 모달 -->
+    <div v-if="showModal" class="modal-backdrop">
+        <div class="modal">
+            <h3>{{ isEditing ? '상품 수정' : '상품 추가' }}</h3>
+            <div class="form-group">
+                <label>브랜드 ID:</label>
+                <input v-model="modalData.brandId" type="number" class="input-field">
+            </div>
+            <div class="form-group">
+                <label>카테고리 ID:</label>
+                <input v-model="modalData.categoryId" type="number" class="input-field">
+            </div>
+            <div class="form-group">
+                <label>가격:</label>
+                <input v-model="modalData.price" type="number" class="input-field">
+            </div>
+            <button @click="saveProduct" class="button">저장</button>
+            <button @click="closeModal" class="button">취소</button>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const brandList = /*[[${brandList}]]*/ [];
+    const categoryList = /*[[${categoryList}]]*/ [];
+</script>
+
+<script>
+    Vue.createApp({
+        data() {
+            return {
+                productList: [],
+                searchCategoryName: '',
+                searchBrandName: '',
+                showModal: false,
+                isEditing: false,
+                modalData: {
+                    productId: null,
+                    categoryId: '',
+                    brandId: '',
+                    price: ''
+                },
+                categoryGuideText: categoryList.map(c => `${c.categoryName}: <b>${c.categoryId}</b>`).join(', '),
+                brandGuideText: brandList.map(b => `${b.brandName}: <b>${b.brandId}</b>`).join(', '),
+                categoryList: categoryList
+            }
+        },
+        methods: {
+            search() {
+                const params = new URLSearchParams({
+                    categoryName: this.searchCategoryName,
+                    brandName: this.searchBrandName
+                });
+                fetch(`/v1/products/search?${params}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        this.productList = data.value || [];
+                    });
+            },
+            showAddModal() {
+                this.isEditing = false;
+                this.modalData = {
+                    productId: null,
+                    categoryId: '',
+                    brandId: '',
+                    price: ''
+                };
+                this.showModal = true;
+            },
+            showEditModal(product) {
+                this.isEditing = true;
+                this.modalData = {
+                    productId: product.productId,
+                    categoryId: product.categoryId,
+                    brandId: product.brandId,
+                    price: product.price
+                };
+                this.showModal = true;
+            },
+            closeModal() {
+                this.showModal = false;
+            },
+            saveProduct() {
+                const data = {
+                    categoryId: Number(this.modalData.categoryId),
+                    brandId: Number(this.modalData.brandId),
+                    price: Number(this.modalData.price)
+                };
+
+                if (this.isEditing) {
+                    fetch(`/v1/products/${this.modalData.productId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    }).then(response => {
+                        if (response.ok) {
+                            this.search();
+                            this.closeModal();
+                        }else{
+                            this.closeModal();
+                            response.json().then(data => alert(data.errorMessage));
+                        }
+                    });
+                } else {
+                    fetch('/v1/products', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    }).then(response => {
+                        if (response.ok) {
+                            this.search();
+                            this.closeModal();
+                        }else{
+                            this.closeModal();
+                            response.json().then(data => alert(data.errorMessage));
+                        }
+                    });
+                }
+            },
+            deleteProduct(productId) {
+               fetch(`/v1/products/${productId}`, {
+                   method: 'DELETE'
+               }).then(response => {
+                   if (response.ok) {
+                       this.search();
+                   }else{
+                       response.json().then(data => alert(data.errorMessage));
+                   }
+               });
+            },
+            home() {
+                window.location.href = '/';
+            }
+        }
+    }).mount('#app')
+</script>
+</body>
+</html>

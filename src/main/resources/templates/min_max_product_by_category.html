@@ -24,9 +24,19 @@
 </head>
 <body>
 <div id="app">
+    <h2>카테고리 별 최고/최저 가격 브랜드/상품</h2>
     <div style="margin-bottom: 20px">
-        <input v-model="categoryName" placeholder="카테고리 이름" style="padding: 8px; margin-right: 10px;">
-        <button @click="search" style="padding: 8px 16px;">검색</button>
+        <div style="margin-bottom: 20px">
+            <select v-model="searchCategoryName" style="padding: 8px; margin-right: 10px;">
+                <option value="">카테고리 선택</option>
+                <option v-for="category in categoryList"
+                        :key="category.categoryId"
+                        :value="category.categoryName">
+                    {{category.categoryName}}
+                </option>
+            </select>
+            <button @click="search" style="padding: 8px 16px;">검색</button>
+        </div>
     </div>
 
     <h2>카테고리: {{category}}</h2>
@@ -64,6 +74,9 @@
 
     <button @click="home" style="padding: 8px 16px;">홈으로</button>
 </div>
+<script th:inline="javascript">
+    const categoryList = /*[[${categoryList}]]*/ [];
+</script>
 
 <script>
     Vue.createApp({
@@ -71,13 +84,15 @@
             return {
                 category: '',
                 minProducts: [],
-                maxProducts: []
+                maxProducts: [],
+                categoryList: categoryList,
+                searchCategoryName: ''
             }
         },
         methods: {
             search() {
                 const params = new URLSearchParams({
-                    categoryName: this.categoryName
+                    categoryName: this.searchCategoryName
                 });
                 fetch(`/v1/finder/categories/products/min-max-price?${params}`)
                     .then(r => r.json())

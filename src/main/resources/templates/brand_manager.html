@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script src="https://unpkg.com/vue@3"></script>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    .button {
+      padding: 8px 16px;
+      margin: 5px;
+      cursor: pointer;
+    }
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border: 1px solid #ddd;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+    }
+    .form-group {
+      margin-bottom: 10px;
+    }
+    .input-field {
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <h2>브랜드 매니저</h2>
+  <div style="margin-bottom: 20px">
+    <button @click="showAddModal" class="button">브랜드 추가</button>
+    <button @click="home" class="button">홈으로</button>
+  </div>
+
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>브랜드명</th>
+      <th>작업</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr v-for="brand in brandList" :key="brand.brandId">
+      <td>{{brand.brandId}}</td>
+      <td>{{brand.brandName}}</td>
+      <td>
+        <button @click="showEditModal(brand)" class="button">수정</button>
+        <button @click="deleteBrand(brand.brandId)" class="button">삭제</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <!-- 추가/수정 모달 -->
+  <div v-if="showModal" class="modal-backdrop">
+    <div class="modal">
+      <h3>{{ isEditing ? '브랜드 수정' : '브랜드 추가' }}</h3>
+      <div class="form-group">
+        <label>브랜드명:</label>
+        <input v-model="modalData.brandName" class="input-field">
+      </div>
+      <button @click="saveBrand" class="button">저장</button>
+      <button @click="closeModal" class="button">취소</button>
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  const rawBrandList = /*[[${brandList}]]*/ [];
+
+  Vue.createApp({
+    data() {
+      return {
+        brandList: rawBrandList,
+        showModal: false,
+        isEditing: false,
+        modalData: {
+          brandId: null,
+          brandName: ''
+        }
+      }
+    },
+    methods: {
+      showAddModal() {
+        this.isEditing = false;
+        this.modalData = {
+          brandId: null,
+          brandName: ''
+        };
+        this.showModal = true;
+      },
+      showEditModal(brand) {
+        this.isEditing = true;
+        this.modalData = {
+          brandId: brand.brandId,
+          brandName: brand.brandName
+        };
+        this.showModal = true;
+      },
+      closeModal() {
+        this.showModal = false;
+      },
+      saveBrand() {
+        const data = {
+          brandName: this.modalData.brandName
+        };
+
+        if (this.isEditing) {
+          fetch(`/v1/brands/${this.modalData.brandId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          }).then(response => {
+            if (response.ok) {
+              window.location.reload();
+            }else{
+              response.json().then(data => alert(data.errorMessage));
+            }
+          });
+        } else {
+          fetch('/v1/brands', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          }).then(response => {
+            if (response.ok) {
+              window.location.reload();
+            }else{
+              response.json().then(data => alert(data.errorMessage));
+            }
+          });
+        }
+      },
+      deleteBrand(brandId) {
+        fetch(`/v1/brands/${brandId}`, {
+          method: 'DELETE'
+        }).then(response => {
+          if (response.ok) {
+            window.location.reload();
+          }else{
+            response.json().then(data => alert(data.errorMessage));
+          }
+        });
+      },
+      home() {
+        window.location.href = '/';
+      }
+    }
+  }).mount('#app')
+</script>
+</body>
+</html>

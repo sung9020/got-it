@@ -3,6 +3,7 @@ package com.snow.gotit.product
 import com.snow.gotit.base.exception.GotItException
 import com.snow.gotit.base.response.ResultResponse
 import com.snow.gotit.base.utils.DatabaseCleaner
+import com.snow.gotit.base.utils.toKRW
 import com.snow.gotit.brand.entity.Brand
 import com.snow.gotit.brand.repository.BrandRepository
 import com.snow.gotit.category.entity.Category
@@ -53,7 +54,7 @@ class ProductManagerServiceTest(
         )
 
         // when
-        val response = productManagerService.createProduct(param)
+        val response = productManagerService.createProduct(param.toValid())
 
         // when
         assertTrue(response is ResultResponse.Success)
@@ -84,7 +85,7 @@ class ProductManagerServiceTest(
 
         // when & then
         assertThrows<GotItException> {
-            productManagerService.createProduct(param)
+            productManagerService.createProduct(param.toValid())
         }
 
         val param2 = CreateProductParam(
@@ -95,7 +96,7 @@ class ProductManagerServiceTest(
 
         // when & then
         assertThrows<GotItException> {
-            productManagerService.createProduct(param2)
+            productManagerService.createProduct(param2.toValid())
         }
     }
 
@@ -112,7 +113,7 @@ class ProductManagerServiceTest(
                 brandId = brand.id ?: 0,
                 categoryId = category.id ?: 0,
                 price = BigDecimal.valueOf(10000L)
-            )
+            ).toValid()
         )
         val createdProductId = if(response is ResultResponse.Success) response.value.productId else 0L
 
@@ -141,7 +142,7 @@ class ProductManagerServiceTest(
             val resultProduct = productRepository.findById(createdProductId).getOrNull()
             assertEquals(resultProduct?.brand?.id, brand2.id )
             assertEquals(resultProduct?.category?.id, category2.id )
-            assertEquals(resultProduct?.price, price )
+            assertEquals(resultProduct?.price?.toKRW(), price )
         }
     }
 
@@ -159,7 +160,7 @@ class ProductManagerServiceTest(
             price = BigDecimal.valueOf(10000L)
         )
 
-        val response = productManagerService.createProduct(param)
+        val response = productManagerService.createProduct(param.toValid())
 
         //when && then
         val createdProductId = if(response is ResultResponse.Success) response.value.productId else 0L

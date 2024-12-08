@@ -1,5 +1,10 @@
 package com.snow.gotit.brand.param
 
-data class ModifyBrandParam(val brandName: String) {
+import jakarta.validation.constraints.NotBlank
+
+data class ModifyBrandParam(
+    @field:NotBlank(message = "브랜드 이름은 필수입니다")
+    val brandName: String? = null,
+) {
 
 }
