@@ -2,100 +2,61 @@ package com.snow.gotit.brand.controller
 
 import com.snow.gotit.base.response.ResultResponse
 import com.snow.gotit.brand.BrandManagerService
-import com.snow.gotit.product.dto.ProductDto
-import org.junit.jupiter.api.Assertions.*
+import com.snow.gotit.brand.dto.BrandDto
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType
+import org.springframework.test.context.bean.override.mockito.MockitoBean
+import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.math.BigDecimal
 
 @WebMvcTest(value = [BrandController::class])
-class BrandControllerTest {
+class BrandControllerTest(
+    @Autowired
+    private val mockMvc: MockMvc,
+) {
+    @MockitoBean
+    private lateinit var brandManagerService: BrandManagerService
+
     @Test
-    fun createProduct_파라미터_valid(){
+    fun createBrand_파라미터_valid(){
         //given
         val param = """
-        {
-            "categoryId": 2,
-            "price": 10000
-        }
+        {}
     """.trimIndent()
         //when
-        `when`(productManagerService.createProduct(org.mockito.kotlin.any()))
-            .thenReturn(ResultResponse.Success(ProductDto(null, BigDecimal.ZERO, "","")))
+        `when`(brandManagerService.createBrand(org.mockito.kotlin.any()))
+            .thenReturn(ResultResponse.Success(BrandDto(null, "")))
 
         //then
         mockMvc.perform(
-            post("/v1/products")
+            post("/v1/brands")
             .contentType(MediaType.APPLICATION_JSON)
             .content(param))
             .andExpect(status().isBadRequest)
     }
 
+
     @Test
-    fun createProduct_파라미터_valid_2(){
+    fun createBrand_성공(){
         //given
         val param = """
         {
-            "brandId": 1,
-            "price": 10000
+            "brandName": "CC"
         }
     """.trimIndent()
         //when
-        `when`(productManagerService.createProduct(org.mockito.kotlin.any()))
-            .thenReturn(ResultResponse.Success(ProductDto(null, BigDecimal.ZERO, "","")))
+        `when`(brandManagerService.createBrand(org.mockito.kotlin.any()))
+            .thenReturn(ResultResponse.Success(BrandDto(null, "")))
 
         //then
         mockMvc.perform(
-            post("/v1/products")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(param))
-            .andExpect(status().isBadRequest)
-    }
-
-    @Test
-    fun createProduct_성공(){
-        //given
-        val param = """
-        {
-            "brandId": 1,
-            "categoryId": 2,
-            "price": 10000
-        }
-    """.trimIndent()
-        //when
-        `when`(productManagerService.createProduct(org.mockito.kotlin.any()))
-            .thenReturn(ResultResponse.Success(ProductDto(null, BigDecimal.ZERO, "","")))
-
-        //then
-        mockMvc.perform(
-            post("/v1/products")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(param))
-            .andExpect(status().is2xxSuccessful)
-    }
-
-    @Test
-    fun modifyProduct_파라미터_valid(){
-        //given
-        val param = """
-        {
-            "brandId": 1,
-            "price": 10000
-        }
-    """.trimIndent()
-        //when
-        `when`(productManagerService.createProduct(org.mockito.kotlin.any()))
-            .thenReturn(ResultResponse.Success(ProductDto(null, BigDecimal.ZERO, "","")))
-
-        //then
-        mockMvc.perform(
-            post("/v1/products")
+            post("/v1/brands")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(param))
-            .andExpect(status().isBadRequest)
+            .andExpect(status().isOk)
     }
 }

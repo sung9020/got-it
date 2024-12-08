@@ -1,17 +1,11 @@
 package com.snow.gotit.brand.controller
 
-import com.snow.gotit.base.response.ResultResponse
-import com.snow.gotit.brand.BrandManagerService
 import com.snow.gotit.brand.dto.BrandDto
-import com.snow.gotit.brand.param.CreateBrandParam
-import com.snow.gotit.brand.param.ModifyBrandParam
 import com.snow.gotit.brand.repository.BrandRepository
-import com.snow.gotit.category.dto.CategoryDto
-import jakarta.validation.Valid
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
 
 @Controller
 @RequestMapping("brands/w")

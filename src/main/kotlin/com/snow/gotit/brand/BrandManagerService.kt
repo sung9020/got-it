@@ -4,12 +4,7 @@ import com.snow.gotit.base.exception.GotItException
 import com.snow.gotit.base.response.ResultResponse
 import com.snow.gotit.brand.dto.BrandDto
 import com.snow.gotit.brand.entity.Brand
-import com.snow.gotit.brand.param.CreateBrandParam
 import com.snow.gotit.brand.repository.BrandRepository
-import com.snow.gotit.product.entity.Product
-import com.snow.gotit.product.param.CreateProductParam
-import com.snow.gotit.product.param.ModifyProductParam
-import jakarta.persistence.IdClass
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus

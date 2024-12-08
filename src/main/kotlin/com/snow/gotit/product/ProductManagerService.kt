@@ -9,10 +9,8 @@ import com.snow.gotit.product.dto.ProductSearchDto
 import com.snow.gotit.product.entity.Product
 import com.snow.gotit.product.param.CreateProductParam
 import com.snow.gotit.product.param.ModifyProductParam
-import com.snow.gotit.product.param.SearchProductParam
 import com.snow.gotit.product.repository.ProductRepository
 import lombok.RequiredArgsConstructor
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service

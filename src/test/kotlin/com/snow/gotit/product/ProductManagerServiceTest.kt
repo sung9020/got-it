@@ -8,7 +8,6 @@ import com.snow.gotit.brand.entity.Brand
 import com.snow.gotit.brand.repository.BrandRepository
 import com.snow.gotit.category.entity.Category
 import com.snow.gotit.category.repository.CategoryRepository
-import com.snow.gotit.product.entity.Product
 import com.snow.gotit.product.param.CreateProductParam
 import com.snow.gotit.product.param.ModifyProductParam
 import com.snow.gotit.product.repository.ProductRepository

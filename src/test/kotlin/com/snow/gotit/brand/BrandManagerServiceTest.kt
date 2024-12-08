@@ -1,22 +1,13 @@
 package com.snow.gotit.brand
 
-import com.snow.gotit.base.exception.GotItException
 import com.snow.gotit.base.response.ResultResponse
 import com.snow.gotit.base.utils.DatabaseCleaner
-import com.snow.gotit.brand.entity.Brand
 import com.snow.gotit.brand.repository.BrandRepository
-import com.snow.gotit.category.entity.Category
-import com.snow.gotit.category.repository.CategoryRepository
-import com.snow.gotit.product.ProductManagerService
-import com.snow.gotit.product.param.CreateProductParam
-import com.snow.gotit.product.param.ModifyProductParam
-import com.snow.gotit.product.repository.ProductRepository
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import java.math.BigDecimal
 import kotlin.jvm.optionals.getOrNull
 
 @SpringBootTest

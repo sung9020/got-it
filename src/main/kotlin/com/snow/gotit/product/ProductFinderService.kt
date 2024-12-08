@@ -1,7 +1,6 @@
 package com.snow.gotit.product
 
 import com.snow.gotit.base.exception.GotItException
-import com.snow.gotit.base.utils.toKRW
 import com.snow.gotit.category.repository.CategoryRepository
 import com.snow.gotit.product.repository.ProductRepository
 import com.snow.gotit.product.response.MinMaxProductByCategoryResponse

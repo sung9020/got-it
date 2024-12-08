@@ -3,7 +3,6 @@ package com.snow.gotit.product.dto
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.snow.gotit.base.utils.toKRW
-import com.snow.gotit.product.entity.Product
 import java.math.BigDecimal
 
 data class ProductFinderDto(

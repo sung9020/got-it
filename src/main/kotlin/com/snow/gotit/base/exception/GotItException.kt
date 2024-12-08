@@ -1,7 +1,6 @@
 package com.snow.gotit.base.exception
 
 import org.springframework.http.HttpStatus
-import java.time.LocalDateTime
 
 data class GotItException(
     val status: HttpStatus,

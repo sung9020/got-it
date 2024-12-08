@@ -1,17 +1,9 @@
 package com.snow.gotit.product.controller
 
 import com.snow.gotit.base.response.ResultResponse
-import com.snow.gotit.brand.repository.BrandRepository
-import com.snow.gotit.category.repository.CategoryRepository
-import com.snow.gotit.product.ProductFinderService
 import com.snow.gotit.product.ProductManagerService
 import com.snow.gotit.product.dto.ProductDto
-import com.snow.gotit.product.param.CreateProductParam
-import com.snow.gotit.product.repository.ProductRepository
-import com.snow.gotit.product.response.MinPriceProductByCategoryResponse
-import io.mockk.impl.annotations.MockK
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.any
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest

@@ -6,7 +6,6 @@ import com.snow.gotit.product.dto.ProductDto
 import com.snow.gotit.product.dto.ProductSearchDto
 import com.snow.gotit.product.param.CreateProductParam
 import com.snow.gotit.product.param.ModifyProductParam
-import com.snow.gotit.product.param.SearchProductParam
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
