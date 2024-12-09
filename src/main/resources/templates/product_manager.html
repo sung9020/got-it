@@ -65,7 +65,7 @@
     </div>
 
     <div class="search-container">
-        <input v-model="searchBrandName" placeholder="브랜드명 검색" class="input-field">
+        <input v-model.trim="searchBrandName" placeholder="브랜드명 검색" class="input-field">
 <!--        <input v-model="searchCategoryName" placeholder="카테고리명 검색" class="input-field">-->
         <select v-model="searchCategoryName" style="padding: 8px; margin-right: 10px;">
             <option value="">카테고리 선택</option>
